@@ -1,0 +1,64 @@
+from collections import defaultdict
+
+
+class CommonKMers:
+    solution = []
+
+    def get_common_substrings(self, k, str1, str2, common_substrings, flag):
+        len_str1, len_str2 = len(str1), len(str2)
+        i, j, row = 1, 1, 1
+        while i < len_str2:
+            j = 1
+            if row > 2:
+                row = 1
+            while j < len_str1:
+                if str1[j] == str2[i]:
+                    if i == 1 or j == 1:
+                        common_substrings[row][j] = 1
+                    else:
+                        if row == 1 and i > 2:
+                            common_substrings[row][j] = common_substrings[2][j - 1] + 1
+                        else:
+                            common_substrings[row][j] = common_substrings[row - 1][j - 1] + 1
+                    if common_substrings[row][j] == k:
+                        if flag is "not_reverse":
+                            self.solution.append("(" + str(j - k) + ", " + str(i - k) + ")")
+                            # print(j - k, i - k)
+                        elif flag is "reverse":
+                            new_j = len_str1 - 1 - (j - k)
+                            self.solution.append("(" + str(new_j - k) + ", " + str(i - k) + ")")
+                            # print(new_j - k, i - k)
+
+                else:
+                    common_substrings[row][j] = 0
+                j += 1
+            row += 1
+            i += 1
+        return common_substrings
+
+
+DNA = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', '@': ''}
+test_data = open("temp_kmer.txt", "r")
+data = test_data.read()
+list1 = data.split("\n")
+k = int(list1[0])
+str1 = "@" + list1[1]
+str2 = "@" + list1[2]
+len_str1, len_str2 = len(str1), len(str2)
+
+common_kmer = CommonKMers()
+common_substrings = [[0 for x in range(len_str1)] for y in range(3)]
+common_substrings = common_kmer.get_common_substrings(k, str1, str2, common_substrings, "not_reverse")
+
+temp = defaultdict(list)
+
+reverse_complement_str1 = ''.join(DNA[ch] for ch in list1[1][::-1])
+
+common_complement_substrings = common_kmer.get_common_substrings(k, "@" + reverse_complement_str1, str2,
+                                                                 common_substrings, "reverse")
+
+solution.append("\n")
+strr = "\n".join(x for x in solution)
+file = open("final_solution.txt", "w")
+file.write(strr)
+file.close()
