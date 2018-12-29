@@ -36,6 +36,7 @@ public class MaximalNonBranchingPath {
             }
             adjacencyList.put(Integer.valueOf(values[0]), list);
         }
+
         in_and_out_degree();
         getAllNonBranchingPaths();
 
